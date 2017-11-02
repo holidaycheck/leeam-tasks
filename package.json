@@ -1,0 +1,30 @@
+{
+  "name": "@holidaycheck/liam-tasks",
+  "version": "1.0.0",
+  "description": "Set of automation tasks for `liam`",
+  "repository": "https://github.com/holidaycheck/liam-tasks",
+  "scripts": {
+    "test": "mocha --require tests/setup.js tests/**/* && eslint tests tasks --fix && ./tests/verify-spec-and-docs-exist.sh"
+  },
+  "author": "Radek Benkel <radoslaw.benkel@holidaycheck.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.10.0",
+    "eslint-config-holidaycheck": "^0.12.1",
+    "mocha": "^4.0.1",
+    "sinon": "^4.0.2",
+    "sinon-chai": "^2.14.0"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "date-arithmetic": "^3.1.0",
+    "dateformat": "^3.0.2",
+    "ramda": "^0.25.0",
+    "sanitize-marathon-app-id": "^1.1.0"
+  },
+  "peerDependencies": {
+    "github": "^12.0.1",
+    "node-fetch": "^1.7.3"
+  }
+}
