@@ -11,14 +11,14 @@ They can be HC specific though (for example, link to base link to JIRA might be 
 
 ## With `liam` (recommended)
 
-See [example](https://github.com/holidaycheck/liam#example-code) in `liam`'s repository. Just `import/require` required tasks from `liam-tasks/tasks/[task-name]`;
+See [example](https://github.com/holidaycheck/liam#example-code) in `liam`'s repository. Just `import/require` required tasks from `@holidaycheck/liam-tasks/tasks/[task-name]`;
 
 ## Without `liam` (not-recommneded)
 
 Just `require` specific task and pass required arguments:
 
 ```javascript
-const task = require('liam-tasks/tasks/add-jira-link')
+const task = require('@holidaycheck/liam-tasks/tasks/add-jira-link')
 const githubClient = require('github')({ ... })
 const logger = console;
 githubClient.authenticate({
