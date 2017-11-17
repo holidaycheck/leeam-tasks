@@ -1,4 +1,13 @@
 const R = require('ramda');
+const Cancel = Symbol('Cancel');
+
+function ignoreCancellations(err) {
+    return err === Cancel ? null : Promise.reject(err);
+}
+
+function validateAction(payload) {
+    return payload.action === 'opened' ? payload : Promise.reject(Cancel);
+}
 
 function getChangedFiles(githubClient, githubParams) {
     return githubClient.pullRequests.getFiles(githubParams)
@@ -33,8 +42,11 @@ module.exports = function checkCoupledFiles(logger, { githubClient, fileSet }, p
         repo: payload.repository.name
     };
 
-    return getChangedFiles(githubClient, githubParams)
+    return Promise.resolve(payload)
+        .then(validateAction)
+        .then(getChangedFiles.bind(null, githubClient, githubParams))
         .then(detectMissingFiles.bind(null, fileSet))
         .then(postComment.bind(null, githubClient, githubParams, fileSet))
-        .then(logMessage.bind(null, logger, githubParams));
+        .then(logMessage.bind(null, logger, githubParams))
+        .catch(ignoreCancellations);
 };
