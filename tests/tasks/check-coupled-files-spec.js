@@ -61,6 +61,24 @@ describe('task check-coupled-files', () => {
         });
     });
 
+    it('should not post a comment if there\'s no missing files', function () {
+        const logger = { log: sinon.spy() };
+        const githubClient = createGithubClient();
+        githubClient.pullRequests.getFiles.resolves({ data: [
+            { filename: 'deps.json' },
+            { filename: 'deps.lock' }
+        ] });
+        const fileSets = [
+            [ 'deps.json', 'deps.lock' ]
+        ];
+
+        checkCoupledFiles(logger, { githubClient, fileSets }, defaultPayload).then(() => {
+            expect(githubClient.pullRequests.getFiles).to.have.been.called;
+            expect(githubClient.issues.createComment).not.to.have.been.called;
+            expect(logger.log).not.to.have.been.called;
+        });
+    });
+
     it('should perform check link only for opened pull requests', () => {
         const ignoredActions = [ 'assigned', 'unassigned', 'labeled', 'unlabeled', 'edited', 'closed', 'reopened' ];
         const createTestCaseForAction = (action) => {

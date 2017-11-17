@@ -17,12 +17,18 @@ function getPullRequestFileChanges(githubClient, githubParams) {
 }
 
 function detectMissingFiles(fileSets, pullRequestFileChanges) {
-    return fileSets.map((fileSet) => {
+    const buildMissingFilesPair = (fileSet) => {
         return {
             fileSet,
             missingFileChanges: R.without(pullRequestFileChanges, fileSet)
         };
-    });
+    };
+
+    const missingFiles = fileSets
+        .map(buildMissingFilesPair)
+        .filter((missingFilesPair) => missingFilesPair.missingFileChanges.length > 0);
+
+    return missingFiles.length > 0 ? missingFiles : Promise.reject(Cancel);
 }
 
 function postComment(githubClient, githubParams, missingFiles) {
