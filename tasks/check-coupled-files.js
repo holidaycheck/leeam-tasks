@@ -9,24 +9,33 @@ function validateAction(payload) {
     return payload.action === 'opened' ? payload : Promise.reject(Cancel);
 }
 
-function getChangedFiles(githubClient, githubParams) {
+function getPullRequestFileChanges(githubClient, githubParams) {
     const extractFilenames = R.pipe(R.prop('data'), R.map(R.prop('filename')));
 
     return githubClient.pullRequests.getFiles(githubParams)
         .then(extractFilenames);
 }
 
-function detectMissingFiles(fileSet, changedFiles) {
-    return R.without(changedFiles, fileSet);
+function detectMissingFiles(fileSets, pullRequestFileChanges) {
+    return fileSets.map((fileSet) => {
+        return {
+            fileSet,
+            missingFileChanges: R.without(pullRequestFileChanges, fileSet)
+        }
+    });
 }
 
-function postComment(githubClient, githubParams, fileSet, missingFiles) {
-    const fileSetList = '`[' + fileSet.join(', ') + ']`';
-    const missingFilesList = '`[' + missingFiles.join(', ') + ']`';
+function postComment(githubClient, githubParams, missingFiles) {
+    const buildFileSetMessageBulletPoint = (missingFilesPair) => {
+        const fileSetsList = '`[' + missingFilesPair.fileSet.join(', ') + ']`';
+        const missingFiles = '`[' + missingFilesPair.missingFileChanges.join(', ') + ']`';
 
-    const body = `Usually these filesets are changed together, but I detected some missing changes:\n\n` +
-        `* in ${fileSetList} set there no change in these files: ${missingFilesList}\n\n` +
-        `Please make sure that you didn't forget about something. If everything is all right, then sorry, my bad!`
+        return `* in ${fileSetsList} set there no change in these files: ${missingFiles}`;
+    };
+
+    const body = `Usually these filesets are changed together, but I detected some missing changes:\n\n`
+        + missingFiles.map(buildFileSetMessageBulletPoint) +
+        `\n\nPlease make sure that you didn't forget about something. If everything is all right, then sorry, my bad!`
 
     return githubClient.issues.createComment(R.merge(githubParams, { body }));
 }
@@ -35,7 +44,7 @@ function logMessage(logger, githubParams) {
     logger.log(`Posted info under pull request ${githubParams.owner}/${githubParams.repo}#${githubParams.number}`);
 }
 
-module.exports = function checkCoupledFiles(logger, { githubClient, fileSet }, payload) {
+module.exports = function checkCoupledFiles(logger, { githubClient, fileSets }, payload) {
     const githubParams = {
         number: payload.number,
         owner: payload.repository.owner.login,
@@ -44,9 +53,9 @@ module.exports = function checkCoupledFiles(logger, { githubClient, fileSet }, p
 
     return Promise.resolve(payload)
         .then(validateAction)
-        .then(getChangedFiles.bind(null, githubClient, githubParams))
-        .then(detectMissingFiles.bind(null, fileSet))
-        .then(postComment.bind(null, githubClient, githubParams, fileSet))
+        .then(getPullRequestFileChanges.bind(null, githubClient, githubParams))
+        .then(detectMissingFiles.bind(null, fileSets))
+        .then(postComment.bind(null, githubClient, githubParams))
         .then(logMessage.bind(null, logger, githubParams))
         .catch(ignoreCancellations);
 };

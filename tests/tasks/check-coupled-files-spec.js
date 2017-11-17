@@ -32,7 +32,7 @@ describe('task check-coupled-files', () => {
         const logger = { log: sinon.spy() };
         const githubClient = createGithubClient();
 
-        checkCoupledFiles(logger, { githubClient, fileSet: [ 'deps.json', 'deps.lock' ] }, defaultPayload).then(() => {
+        checkCoupledFiles(logger, { githubClient, fileSets: [ [ 'deps.json', 'deps.lock' ] ] }, defaultPayload).then(() => {
             expect(githubClient.pullRequests.getFiles).to.have.been.calledWithExactly({
                 owner: 'foo',
                 repo: 'bar',
@@ -60,7 +60,7 @@ describe('task check-coupled-files', () => {
             const githubClient = createGithubClient();
             const payload = Object.assign({}, defaultPayload, { action });
 
-            return checkCoupledFiles(logger, { githubClient, fileSet: [] }, payload)
+            return checkCoupledFiles(logger, { githubClient, fileSets: [] }, payload)
                 .then(() => {
                     expect(githubClient.pullRequests.getFiles).not.to.have.been.called;
                     expect(githubClient.issues.createComment).not.to.have.been.called;
