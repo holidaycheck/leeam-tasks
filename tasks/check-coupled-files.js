@@ -21,21 +21,21 @@ function detectMissingFiles(fileSets, pullRequestFileChanges) {
         return {
             fileSet,
             missingFileChanges: R.without(pullRequestFileChanges, fileSet)
-        }
+        };
     });
 }
 
 function postComment(githubClient, githubParams, missingFiles) {
     const buildFileSetMessageBulletPoint = (missingFilesPair) => {
-        const fileSetsList = '`[' + missingFilesPair.fileSet.join(', ') + ']`';
-        const missingFiles = '`[' + missingFilesPair.missingFileChanges.join(', ') + ']`';
+        const fileSetsList = `\`[${ missingFilesPair.fileSet.join(', ') }]\``;
+        const missingFiles = `\`[${ missingFilesPair.missingFileChanges.join(', ') }]\``;
 
-        return `* in ${fileSetsList} set there no change in these files: ${missingFiles}`;
+        return `* in ${fileSetsList} set there no change in these files: ${missingFiles}\n`;
     };
 
-    const body = `Usually these filesets are changed together, but I detected some missing changes:\n\n`
-        + missingFiles.map(buildFileSetMessageBulletPoint) +
-        `\n\nPlease make sure that you didn't forget about something. If everything is all right, then sorry, my bad!`
+    const body = `Usually these filesets are changed together, but I detected some missing changes:\n\n${
+        missingFiles.map(buildFileSetMessageBulletPoint).join('')
+    }\nPlease make sure that you didn't forget about something. If everything is all right, then sorry, my bad!`;
 
     return githubClient.issues.createComment(R.merge(githubParams, { body }));
 }

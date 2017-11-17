@@ -18,9 +18,7 @@ describe('task check-coupled-files', () => {
     function createGithubClient() {
         return {
             pullRequests: {
-                getFiles: sinon.stub().resolves({
-                    data: [ { filename: 'deps.json' }, { filename: 'README.md.txt' } ]
-                })
+                getFiles: sinon.stub()
             },
             issues: {
                 createComment: sinon.stub().resolves()
@@ -31,8 +29,12 @@ describe('task check-coupled-files', () => {
     it('should detect non-changed files', function () {
         const logger = { log: sinon.spy() };
         const githubClient = createGithubClient();
+        githubClient.pullRequests.getFiles.resolves({ data:
+            [ { filename: 'deps.json' }, { filename: 'README.md' } ]
+        });
+        const fileSets = [ [ 'deps.json', 'deps.lock' ] ];
 
-        checkCoupledFiles(logger, { githubClient, fileSets: [ [ 'deps.json', 'deps.lock' ] ] }, defaultPayload).then(() => {
+        checkCoupledFiles(logger, { githubClient, fileSets }, defaultPayload).then(() => {
             expect(githubClient.pullRequests.getFiles).to.have.been.calledWithExactly({
                 owner: 'foo',
                 repo: 'bar',
@@ -46,6 +48,41 @@ describe('task check-coupled-files', () => {
                 body: 'Usually these filesets are changed together, but I detected some missing changes:\n\n' +
                       '* in `[deps.json, deps.lock]` set there no change in these files: `[deps.lock]`\n\n' +
                        'Please make sure that you didn\'t forget about something. ' +
+                       'If everything is all right, then sorry, my bad!'
+            });
+
+            expect(logger.log).to.have.been.calledWithExactly('Posted info under pull request foo/bar#123');
+        });
+    });
+
+    it('should detect changes in multiple filesets', function () {
+        const logger = { log: sinon.spy() };
+        const githubClient = createGithubClient();
+        githubClient.pullRequests.getFiles.resolves({ data: [
+            { filename: 'deps.json' },
+            { filename: 'docs/README.html' }
+        ] });
+        const fileSets = [
+            [ 'deps.json', 'deps.lock' ],
+            [ 'README.md', 'docs/README.html', 'docs/README.pdf' ]
+        ];
+
+        checkCoupledFiles(logger, { githubClient, fileSets }, defaultPayload).then(() => {
+            expect(githubClient.pullRequests.getFiles).to.have.been.calledWithExactly({
+                owner: 'foo',
+                repo: 'bar',
+                number: 123
+            });
+
+            expect(githubClient.issues.createComment).to.have.been.calledWithExactly({
+                owner: 'foo',
+                repo: 'bar',
+                number: 123,
+                body: 'Usually these filesets are changed together, but I detected some missing changes:\n\n' +
+                      '* in `[deps.json, deps.lock]` set there no change in these files: `[deps.lock]`\n' +
+                      '* in `[README.md, docs/README.html, docs/README.pdf]` set there no change ' +
+                      'in these files: `[README.md, docs/README.pdf]`\n\n' +
+                      'Please make sure that you didn\'t forget about something. ' +
                        'If everything is all right, then sorry, my bad!'
             });
 
