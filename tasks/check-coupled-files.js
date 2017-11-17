@@ -10,9 +10,10 @@ function validateAction(payload) {
 }
 
 function getChangedFiles(githubClient, githubParams) {
+    const extractFilenames = R.pipe(R.prop('data'), R.map(R.prop('filename')));
+
     return githubClient.pullRequests.getFiles(githubParams)
-        .then(R.prop('data'))
-        .then(R.map(R.prop('filename')));
+        .then(extractFilenames);
 }
 
 function detectMissingFiles(fileSet, changedFiles) {
