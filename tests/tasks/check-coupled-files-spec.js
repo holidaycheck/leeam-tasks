@@ -43,11 +43,16 @@ describe('task check-coupled-files', () => {
                 owner: 'foo',
                 repo: 'bar',
                 number: 123,
-                body: 'Usually these files: `deps.json`, `deps.lock` are changed together in one changeset.\n' +
-                      'However, in this pull request these files are not changed: `deps.lock`.\n' +
-                      'Please make sure that you didn\'t forget about something. ' +
-                      'If everything is all right, then sorry, my bad!'
+                body: 'Usually these filesets are changed together, but I detected some missing changes:\n\n' +
+                      '* In `[deps.json, deps.lock]` set there no change in these files: `[deps.lock]`\n\n' +
+                       'Please make sure that you didn\'t forget about something. ' +
+                       'If everything is all right, then sorry, my bad!'
             });
+
+            console.log('Usually these filesets are changed together, but I detected some missing changes:\n\n' +
+            '* in `[deps.json, deps.lock]` set there no change in these files: `[deps.lock]`\n\n' +
+             'Please make sure that you didn\'t forget about something. ' +
+             'If everything is all right, then sorry, my bad!');
 
             expect(logger.log).to.have.been.calledWithExactly('Posted info under pull request foo/bar#123');
         });

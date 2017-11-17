@@ -20,13 +20,12 @@ function detectMissingFiles(fileSet, changedFiles) {
 }
 
 function postComment(githubClient, githubParams, fileSet, missingFiles) {
-    const wrapWithCodeMarkup = (str) => `\`${ str }\``;
-    const fileSetList = fileSet.map(wrapWithCodeMarkup).join(', ');
-    const missingFilesList = missingFiles.map(wrapWithCodeMarkup).join(', ');
+    const fileSetList = '`[' + fileSet.join(', ') + ']`';
+    const missingFilesList = '`[' + missingFiles.join(', ') + ']`';
 
-    const body = `Usually these files: ${fileSetList} are changed together in one changeset.\n` +
-        `However, in this pull request these files are not changed: ${missingFilesList}.\n` +
-        'Please make sure that you didn\'t forget about something. If everything is all right, then sorry, my bad!';
+    const body = `Usually these filesets are changed together, but I detected some missing changes:\n\n` +
+        `* in ${fileSetList} set there no change in these files: ${missingFilesList}\n\n` +
+        `Please make sure that you didn't forget about something. If everything is all right, then sorry, my bad!`
 
     return githubClient.issues.createComment(R.merge(githubParams, { body }));
 }
