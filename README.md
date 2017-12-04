@@ -33,5 +33,6 @@ task(logger, { githubClient }) //this task will run once and script will end.
 
 * [`add-labels`](./docs/add-labels.md)
 * [`add-jira-link`](./docs/add-jira-link.md)
+* [`check-coupled-files`](./docs/check-coupled-files.md)
 * [`auto-merge-pull-request`](./docs/auto-merge-pull-request.md)
 * [`ping-old-pull-requests`](./docs/ping-old-pull-requests.md)
