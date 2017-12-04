@@ -1,7 +1,11 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.1.0] - 2017-12-04
+### Added
 - Add LICENSE file
+- Add `check-coupled-files` task
 
 ## [1.0.1] - 2017-11-08
 ### Changed
