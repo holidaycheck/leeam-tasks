@@ -4,6 +4,7 @@
 ### Changed
 - Fix wrong `check-coupled-files` behaviour when none of files from fileSets were changed
 - Fix typos in `check-coupled-files` task wording
+- Update dependencies
 
 ## [1.1.0] - 2017-12-04
 ### Added
