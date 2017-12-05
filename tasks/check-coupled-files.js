@@ -18,9 +18,11 @@ function getPullRequestFileChanges(githubClient, githubParams) {
 
 function detectMissingFiles(fileSets, pullRequestFileChanges) {
     const buildMissingFilesPair = (fileSet) => {
+        const commonFiles = R.intersection(pullRequestFileChanges, fileSet);
+
         return {
             fileSet,
-            missingFileChanges: R.without(pullRequestFileChanges, fileSet)
+            missingFileChanges: commonFiles.length === 0 ? [] : R.without(commonFiles, fileSet)
         };
     };
 

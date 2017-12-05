@@ -61,12 +61,30 @@ describe('task check-coupled-files', () => {
         });
     });
 
-    it('should not post a comment if there\'s no missing files', function () {
+    it('should not post a comment if there\'s no missing files (all coupled files are changed)', function () {
         const logger = { log: sinon.spy() };
         const githubClient = createGithubClient();
         githubClient.pullRequests.getFiles.resolves({ data: [
             { filename: 'deps.json' },
             { filename: 'deps.lock' }
+        ] });
+        const fileSets = [
+            [ 'deps.json', 'deps.lock' ]
+        ];
+
+        checkCoupledFiles(logger, { githubClient, fileSets }, defaultPayload).then(() => {
+            expect(githubClient.pullRequests.getFiles).to.have.been.called;
+            expect(githubClient.issues.createComment).not.to.have.been.called;
+            expect(logger.log).not.to.have.been.called;
+        });
+    });
+
+    it('should not post a comment if there\'s no missing files (no change to any of coupled files)', function () {
+        const logger = { log: sinon.spy() };
+        const githubClient = createGithubClient();
+        githubClient.pullRequests.getFiles.resolves({ data: [
+            { filename: 'foo.bar' },
+            { filename: 'baz.baz' }
         ] });
         const fileSets = [
             [ 'deps.json', 'deps.lock' ]
