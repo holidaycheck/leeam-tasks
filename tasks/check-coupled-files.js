@@ -38,12 +38,12 @@ function postComment(githubClient, githubParams, missingFiles) {
         const fileSetsList = `\`[${ missingFilesPair.fileSet.join(', ') }]\``;
         const missingFiles = `\`[${ missingFilesPair.missingFileChanges.join(', ') }]\``;
 
-        return `* in ${fileSetsList} set there no change in these files: ${missingFiles}\n`;
+        return `* in ${fileSetsList} set there's no change in these files: ${missingFiles}\n`;
     };
 
     const body = `Usually these filesets are changed together, but I detected some missing changes:\n\n${
         missingFiles.map(buildFileSetMessageBulletPoint).join('')
-    }\nPlease make sure that you didn't forget about something. If everything is all right, then sorry, my bad!`;
+    }\nPlease make sure that you didn't forget anything. If everything is all right, then sorry - my bad!`;
 
     return githubClient.issues.createComment(R.merge(githubParams, { body }));
 }
