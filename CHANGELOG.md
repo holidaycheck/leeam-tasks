@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.1.1] - 2017-12-05
 ### Changed
 - Fix wrong `check-coupled-files` behaviour when none of files from fileSets were changed
 - Fix typos in `check-coupled-files` task wording
