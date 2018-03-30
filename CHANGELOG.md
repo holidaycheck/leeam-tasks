@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Remove HC specific part from README
 
 ## [1.1.1] - 2017-12-05
 ### Changed

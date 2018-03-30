@@ -2,10 +2,7 @@ Set of automation tasks for [liam](https://github.com/holidaycheck/liam).
 
 Due to the `liam`s architecture, you need to install peer dependencies. You can do this manually or use [`npm-install-peers`](https://www.npmjs.com/package/npm-install-peers) by simply calling `npx npm-install-peers`. (since `npm@5.2.0`).
 
-**NOTE:** you don't have to use `liam` if you want to use those tasks - each of those is separate function with all required dependencies being injected during execution.
-
-Tasks in those repository shouldn't be repository/product specific.
-They can be HC specific though (for example, link to base link to JIRA might be hardcoded).
+**NOTE:** you don't have to use `liam` if you want to use these tasks - each is a separate function with all required dependencies being injected during execution.
 
 ### Usage
 
