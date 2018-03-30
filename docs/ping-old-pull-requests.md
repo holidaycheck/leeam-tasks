@@ -13,4 +13,4 @@ Cron.
 * `githubClient` - already authenticated instance of npm's [github](https://www.npmjs.com/package/github)
 * `getCurrentDate` - function returning current date, in simplest form it would be `const getCurrentDate = () => new Date()`
 * `olderThan` - (optional) object defining amount of time which should be taken into account to consider PR being stale. Eg. `{ value: 1, unit: 'day|week|month' }`. Please note, that hours/minutes/seconds are ignored.
-* `repository` - object containing repo name and owner: `{ owner: 'hc-web', name: 'hc-react-web' }`
+* `repository` - object containing repo name and owner: `{ owner: 'holidaycheck', name: 'tech-blog' }`
