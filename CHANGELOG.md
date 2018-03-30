@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Remove HC specific part from README
+- Update dependencies
 
 ## [1.1.1] - 2017-12-05
 ### Changed

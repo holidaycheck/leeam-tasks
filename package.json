@@ -10,16 +10,16 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "^4.1.2",
-    "eslint": "^4.12.1",
+    "eslint": "^4.19.1",
     "eslint-config-holidaycheck": "^0.12.1",
-    "mocha": "^4.0.1",
-    "sinon": "^4.0.2",
-    "sinon-chai": "^2.14.0"
+    "mocha": "^5.0.5",
+    "sinon": "^4.4.10",
+    "sinon-chai": "^3.0.0"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
     "date-arithmetic": "^3.1.0",
-    "dateformat": "^3.0.2",
+    "dateformat": "^3.0.3",
     "ramda": "^0.25.0",
     "sanitize-marathon-app-id": "^1.1.0"
   },
