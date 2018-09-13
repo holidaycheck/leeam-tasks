@@ -64,7 +64,7 @@ module.exports = function autoMergePullRequest(logger, { githubClient, label, re
             .then((pr) => pr || Promise.reject(Cancel))
             .then((pr) => fetchPullRequestRefAndMergeStatus(githubClient, repository, { number: pr.number }))
             .then((pullRequestData) => {
-                if (pullRequestData.mergeable_state === 'clean') {
+                if (pullRequestData.mergeable_state.match(/^(clean|unstable)$/)) {
                     return mergePullRequest(githubClient, repository, pullRequestData)
                         .then(commentOnPullRequest.bind(null, githubClient, label, repository))
                         .then(deletePullRequestBranch.bind(null, githubClient, repository))

@@ -26,7 +26,7 @@ describe('task auto-merge-pull-request', () => {
         return { log: sinon.spy() };
     };
 
-    it('should merge pull request that fulfils merge criteria', () => {
+    it('should merge pull request with status "clean"', () => {
         const logger = createLogger();
         const repository = { owner: 'foo', name: 'bar' };
         const label = 'merge-me-please';
@@ -78,6 +78,30 @@ describe('task auto-merge-pull-request', () => {
         });
     });
 
+    it('should merge pull request with status "unstable"', () => {
+        const logger = createLogger();
+        const repository = { owner: 'foo', name: 'bar' };
+        const label = 'merge-me-please';
+        const githubClient = createGithubClient();
+        githubClient.gitdata.deleteReference.resolves();
+        githubClient.issues.createComment.resolves();
+        githubClient.pullRequests.get.resolves({ data: {
+            head: { ref: 'feature-branch' },
+            mergeable_state: 'unstable'
+        } });
+        githubClient.pullRequests.merge.resolves();
+        githubClient.search.issues.resolves({ data: { items: [ { number: 1337 } ] } });
+
+        return autoMergePullRequest(logger, { githubClient, label, repository }).then(() => {
+            expect(githubClient.search.issues).to.have.been.calledOnce;
+            expect(githubClient.pullRequests.get).to.have.been.calledOnce;
+            expect(githubClient.pullRequests.merge).to.have.been.calledOnce;
+            expect(githubClient.issues.createComment).to.have.been.calledOnce;
+            expect(githubClient.gitdata.deleteReference).to.have.been.calledOnce;
+            expect(logger.log).to.have.been.calledOnce;
+        });
+    });
+
     it('should not merge anything when there\'s no matching pull request found', () => {
         const logger = createLogger();
         const repository = { owner: 'foo', name: 'bar' };
@@ -124,7 +148,7 @@ describe('task auto-merge-pull-request', () => {
     });
 
     it('should not try to merge non-mergeable pull request', () => {
-        const ignoredStates = [ 'dirty', 'unknown', 'blocked', 'behind', 'unstable', 'has_hooks', 'foobar' ];
+        const ignoredStates = [ 'dirty', 'unknown', 'blocked', 'behind', 'has_hooks', 'foobar' ];
         const createTestCaseForMergeableState = (state) => {
             const logger = createLogger();
             const repository = { owner: 'foo', name: 'bar' };

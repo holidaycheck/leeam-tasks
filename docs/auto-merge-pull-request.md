@@ -25,7 +25,7 @@ Cron.
 
 Oldest pull request (by `created` attribute value).
 
-* **What is this `mergeable_state` field in pull request response? I cannot find this in API docs
+* What is this `mergeable_state` field in pull request response? I cannot find this in API docs
 
 This value is undocumented, here's the excerpt from GitHub Support:
 
@@ -37,4 +37,4 @@ This value is undocumented, here's the excerpt from GitHub Support:
 * *has_hooks*: This is for Enterprise only, if a repo has custom pre-receive hooks. Merging is allowed (green box).
 * *clean*: No conflicts, everything good. Merging is allowed (green box).
 
-Basically, we're interested only in `mergeable_state === clean`
+Basically, we're interested only in `mergeable_state === clean|unstable`
